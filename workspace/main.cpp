@@ -20,6 +20,7 @@ int main()
         for(int j = 0; j<UserSet[i]->interests.size(); j++){
             cout << UserSet[i]->interests[j] << "/";
         }
+        cout << endl;
     }
     // 알고리즘 별 결과 확인 
     // 1. MBTI별로 궁합도 확인하여 정렬 후 3, 4점인 사람들만 데이터 추출하여 새로운 임시 배열에 저장.
