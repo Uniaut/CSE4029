@@ -64,6 +64,30 @@ UserData** heapsortAsFitness(UserData **unsorted, int index_query, int size)
             child = parent;
         }
     }
+
+    for (int i = size - 1; i >= 0; i--)
+    {
+        UserData *temp = sorted[0];
+        sorted[0] = sorted[i];
+        sorted[i] = temp;
+        int parent = 0;
+        int child = 1;
+        while (child < i)
+        {
+            child = 2 * parent + 1;
+            if (child < i - 1 && combination_fitness(center, sorted[child]) < combination_fitness(center, sorted[child + 1]))
+            {
+                child++;
+            }
+            if (child < i && combination_fitness(center, sorted[parent]) < combination_fitness(center, sorted[child]))
+            {
+                UserData *temp = sorted[parent];
+                sorted[parent] = sorted[child];
+                sorted[child] = temp;
+            }
+            parent = child;
+        }
+    }
     
     return sorted;
 }
@@ -128,7 +152,46 @@ UserData** mergesortAsFitness(UserData **unsorted, int index_query, int size)
     return sorted;
 }
 
+// quick sort
+// input: array of UserData
+// output: sorted array of UserData by fitness
+void _quicksortAsFitness(UserData **unsorted, UserData *center, int left, int right)
+{
+    int i = left;
+    int j = right;
+    int pivot = combination_fitness(center, unsorted[(left + right) / 2]);
+    while (i <= j)
+    {
+        while (combination_fitness(center, unsorted[i]) > pivot)
+            i++;
+        while (combination_fitness(center, unsorted[j]) < pivot)
+            j--;
+        if (i <= j)
+        {
+            UserData *temp = unsorted[i];
+            unsorted[i] = unsorted[j];
+            unsorted[j] = temp;
+            i++;
+            j--;
+        }
+    }
+    if (left < j)
+        _quicksortAsFitness(unsorted, center, left, j);
+    if (i < right)
+        _quicksortAsFitness(unsorted, center, i, right);
+}
 
+UserData** quicksortAsFitness(UserData **unsorted, int index_query, int size)
+{
+    UserData **sorted = new UserData*[size];
+    UserData *center = unsorted[index_query];
+    for (int i = 0; i < size; i++)
+    {
+        sorted[i] = unsorted[i];
+    }
+    _quicksortAsFitness(sorted, center, 0, size - 1);
+    return sorted;
+}
 
 
 int main()
@@ -156,19 +219,27 @@ int main()
     // 3. ????????????????????????????????????????????????????
 
     cout << "Algorithm 1: Merge Sort" << endl;
-    auto result = mergesortAsFitness(UserSet, 3, 100);
+    auto merge_result = mergesortAsFitness(UserSet, 3, 100);
     for(int i = 0 ; i< 100; i++)
     {
-        cout << "User ID: " << result[i]->id << '\t';
-        cout << "Fitness: " << combination_fitness(result[i], UserSet[3]) << endl;
+        cout << "User ID: " << merge_result[i]->id << '\t';
+        cout << "Fitness: " << combination_fitness(merge_result[i], UserSet[3]) << endl;
     }
 
-    cout << "Algorithm 1: Merge Sort" << endl;
-    auto result = mergesortAsFitness(UserSet, 3, 100);
+    cout << "Algorithm 2: Quick Sort" << endl;
+    auto quick_result = quicksortAsFitness(UserSet, 3, 100);
     for(int i = 0 ; i< 100; i++)
     {
-        cout << "User ID: " << result[i]->id << '\t';
-        cout << "Fitness: " << combination_fitness(result[i], UserSet[3]) << endl;
+        cout << "User ID: " << quick_result[i]->id << '\t';
+        cout << "Fitness: " << combination_fitness(quick_result[i], UserSet[3]) << endl;
+    }
+
+    cout << "Algorithm 3: Heap Sort" << endl;
+    auto heap_result = heapsortAsFitness(UserSet, 3, 100);
+    for(int i = 0 ; i< 100; i++)
+    {
+        cout << "User ID: " << quick_result[i]->id << '\t';
+        cout << "Fitness: " << combination_fitness(quick_result[i], UserSet[3]) << endl;
     }
     //  //Heap Sort
 	// clock_t start, end;
